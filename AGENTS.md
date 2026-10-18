@@ -7,7 +7,7 @@
 - **Irreversible steps** (merge, delete, production, credentials, external messages) need Captain's typed words naming the step; a tap is not enough.
 - **No spending.** Never ask Captain to pay for or raise billing/usage; find a free route.
 - **Check before asking** what Captain or their agents already decided (iMelki/TB issues/PRs, agent memory). Research before deciding.
-- **Reuse before building**: TB, ccx-cli and other Asimtop repos first; established UI libraries over custom UI.
+- **Reuse before building**: TB, ccx-cli and other Asimtop repos first; before adding a config, hook, script or agent file, check TB's shared-files manifest (TB #232) and promote duplicates to TB. Established UI libraries over custom UI.
 - **Short messages**: answer first, evidence per claim, no process noise. Track work on GitHub. Re-raise any unanswered ask to Captain.
 <!-- asimtop-universal-rules:end -->
 
