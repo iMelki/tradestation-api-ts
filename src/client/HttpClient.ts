@@ -14,7 +14,7 @@ export class HttpClient {
 
         // Determine base URL based on environment
         const baseURL = config?.environment?.toLowerCase() === 'simulation'
-            ? 'https://sim.api.tradestation.com'
+            ? 'https://sim-api.tradestation.com'
             : 'https://api.tradestation.com';
 
         this.axiosInstance = axios.create({

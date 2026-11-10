@@ -78,7 +78,7 @@ describe('HttpClient', () => {
     describe('constructor', () => {
         it('should create axios instance with correct config for Simulation environment', () => {
             expect(axios.create).toHaveBeenCalledWith({
-                baseURL: 'https://sim.api.tradestation.com',
+                baseURL: 'https://sim-api.tradestation.com',
                 headers: {
                     'Content-Type': 'application/json'
                 }
