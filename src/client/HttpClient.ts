@@ -1,3 +1,4 @@
+import { resolveEnvironment, SIMULATION_BASE_URL, LIVE_BASE_URL } from './resolveEnvironment';
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { TokenManager } from '../utils/TokenManager';
 import { RateLimiter } from '../utils/RateLimiter';
@@ -13,9 +14,9 @@ export class HttpClient {
         this.rateLimiter = new RateLimiter();
 
         // Determine base URL based on environment
-        const baseURL = config?.environment?.toLowerCase() === 'simulation'
-            ? 'https://sim-api.tradestation.com'
-            : 'https://api.tradestation.com';
+        const baseURL = resolveEnvironment(config?.environment, config?.allowLive) === 'Simulation'
+            ? SIMULATION_BASE_URL
+            : LIVE_BASE_URL;
 
         this.axiosInstance = axios.create({
             baseURL,
