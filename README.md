@@ -162,6 +162,7 @@ CLIENT_ID=your_client_id
 CLIENT_SECRET=your_client_secret # Optional for public clients
 REFRESH_TOKEN=your_refresh_token
 ENVIRONMENT=Simulation  # or 'Live'
+# Live needs a second key: allowLive: true in config, or TRADESTATION_LIVE_APPROVED=true. Any other value (unset, 'sim', typos) throws.
 ```
 
 1. Initialize the client:

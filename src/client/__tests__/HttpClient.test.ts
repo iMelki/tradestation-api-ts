@@ -78,7 +78,7 @@ describe('HttpClient', () => {
     describe('constructor', () => {
         it('should create axios instance with correct config for Simulation environment', () => {
             expect(axios.create).toHaveBeenCalledWith({
-                baseURL: 'https://sim.api.tradestation.com',
+                baseURL: 'https://sim-api.tradestation.com',
                 headers: {
                     'Content-Type': 'application/json'
                 }
@@ -88,7 +88,8 @@ describe('HttpClient', () => {
         it('should create axios instance with correct config for Live environment', () => {
             const liveConfig = {
                 ...config,
-                environment: 'Live' as 'Live' | 'Simulation'
+                environment: 'Live' as 'Live' | 'Simulation',
+                allowLive: true
             };
             new HttpClient(liveConfig);
 
@@ -98,6 +99,55 @@ describe('HttpClient', () => {
                     'Content-Type': 'application/json'
                 }
             });
+        });
+    });
+
+    describe('fail-closed environment', () => {
+        const savedApproved = process.env.TRADESTATION_LIVE_APPROVED;
+        afterEach(() => {
+            if (savedApproved === undefined) delete process.env.TRADESTATION_LIVE_APPROVED;
+            else process.env.TRADESTATION_LIVE_APPROVED = savedApproved;
+        });
+
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const make = (environment: any, extra: object = {}) =>
+            new HttpClient({ ...config, environment, ...extra });
+
+        it.each([undefined, '', 'sim', 'paper', 'Simulations', 'Livee'])(
+            'refuses %p and never reaches the Live host',
+            (value) => {
+                (axios.create as jest.Mock).mockClear();
+                expect(() => make(value)).toThrow();
+                expect(axios.create).not.toHaveBeenCalled();
+            }
+        );
+
+        it('trims whitespace and ignores case for Simulation', () => {
+            (axios.create as jest.Mock).mockClear();
+            make(' Simulation ');
+            expect((axios.create as jest.Mock).mock.calls[0][0].baseURL).toBe('https://sim-api.tradestation.com');
+        });
+
+        it('refuses Live without the second key', () => {
+            delete process.env.TRADESTATION_LIVE_APPROVED;
+            expect(() => make('Live')).toThrow(/second key/);
+            process.env.TRADESTATION_LIVE_APPROVED = 'yes';
+            expect(() => make('Live')).toThrow(/second key/);
+        });
+
+        it('allows Live with allowLive or TRADESTATION_LIVE_APPROVED=true', () => {
+            (axios.create as jest.Mock).mockClear();
+            make('Live', { allowLive: true });
+            process.env.TRADESTATION_LIVE_APPROVED = 'true';
+            make('live');
+            const urls = (axios.create as jest.Mock).mock.calls.map((c) => c[0].baseURL);
+            expect(urls).toEqual(['https://api.tradestation.com', 'https://api.tradestation.com']);
+        });
+
+        it('never resolves a Simulation environment to the Live host', () => {
+            (axios.create as jest.Mock).mockClear();
+            make('simulation');
+            expect((axios.create as jest.Mock).mock.calls[0][0].baseURL).not.toContain('//api.tradestation.com');
         });
     });
 

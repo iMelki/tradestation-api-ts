@@ -1,5 +1,6 @@
 import { ClientConfig } from '../types/config';
 import { HttpClient } from './HttpClient';
+import { resolveEnvironment } from './resolveEnvironment';
 import { StreamManager } from '../streaming/StreamManager';
 import { MarketDataService } from '../services/MarketDataService';
 import { OrderExecutionService } from '../services/OrderExecutionService';
@@ -37,7 +38,7 @@ export class TradeStationClient {
 
         // Normalize environment to proper case
         if (environment) {
-            environment = environment.toLowerCase() === 'simulation' ? 'Simulation' : 'Live';
+            environment = resolveEnvironment(environment, config?.allowLive);
         } else {
             throw new Error('Environment must be specified either in config or ENVIRONMENT env var');
         }

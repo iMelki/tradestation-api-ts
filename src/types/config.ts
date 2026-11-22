@@ -4,6 +4,8 @@ export interface ClientConfig {
     refresh_token?: string;
     maxConcurrentStreams?: number;
     environment?: 'Simulation' | 'Live';
+    /** Second key required for 'Live' (or set TRADESTATION_LIVE_APPROVED=true). */
+    allowLive?: boolean;
 }
 
 export interface AuthResponse {
